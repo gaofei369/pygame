@@ -19,6 +19,8 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("My Ggame")
 clock = pygame.time.Clock()
 
+all_sprites = pygame.sprite.Group()
+
 # Game loop
 running = True
 while running:
@@ -29,9 +31,11 @@ while running:
             running = False
 
     #Update
+    all_sprites.update()
 
     #Draw / rendrer
     screen.fill(BLACK)
+    all_sprites.draw(screen)
     pygame.display.flip()
 
 pygame.QUIT()
