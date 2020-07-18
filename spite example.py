@@ -2,10 +2,15 @@ import pygame
 import random
 import time
 import os
+from os import path
 
-WIDTH = 360
-HEIGHT = 480
-FPS = 30
+img_dir = path.join(path.dirname(__file__), 'img').replace('\\','/')
+print(img_dir)
+
+
+WIDTH = 480
+HEIGHT = 600
+FPS = 60
 
 # define colors
 WHITE = (255,255,255)
@@ -24,8 +29,8 @@ clock = pygame.time.Clock()
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50,40))
-        self.image.fill(GREEN)
+        self.image = pygame.transform.scale(player_img, (50, 38))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -52,9 +57,9 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((30,40))
-        self.image.fill(RED)
+        self.image = meteor_img
         self.rect = self.image.get_rect()
+        self.image.set_colorkey(BLACK)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100,-40)
         self.speedy = random.randrange(1,8)
@@ -71,8 +76,8 @@ class Mob(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 20))
-        self.image.fill(YELLOW)
+        self.image = bullet_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -82,6 +87,15 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y +=self.speedy
         if self.rect.bottom < 0:
             self.kill()
+
+background = pygame.image.load(path.join(img_dir, "blue.png").replace('\\','/')).convert()
+background_rect = background.get_rect()
+player_img = pygame.image.load(path.join(img_dir, "playerShip1_orange.png").replace('\\','/')).convert()
+meteor_img = pygame.image.load(path.join(img_dir, "meteorBrown_big4.png").replace('\\','/')).convert()
+bullet_img = pygame.image.load(path.join(img_dir, "laserRed01.png").replace('\\','/')).convert()
+
+
+
 
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
@@ -128,6 +142,7 @@ while running:
 
     #Draw / rendrer
     screen.fill(BLACK)
+    screen.blit(background, background_rect)
     all_sprites.draw(screen)
     pygame.display.flip()
 
