@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import time
@@ -5,8 +6,7 @@ import os
 from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img').replace('\\','/')
-print(img_dir)
-
+snd_dir = path.join(path.dirname(__file__), 'snd').replace('\\','/')
 
 WIDTH = 480
 HEIGHT = 600
@@ -63,6 +63,8 @@ class Player(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.top)
         all_sprites.add(bullet)
         bullets.add(bullet)
+        shoot_sound.set_volume(0.1)
+        shoot_sound.play()
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -115,7 +117,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y +=self.speedy
         if self.rect.bottom < 0:
             self.kill()
-
+#load graphics
 background = pygame.image.load(path.join(img_dir, "blue.png").replace('\\','/')).convert()
 background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir, "playerShip1_orange.png").replace('\\','/')).convert()
@@ -125,7 +127,13 @@ meteor_list = ['meteorBrown_big1.png', 'meteorBrown_big2.png', 'meteorBrown_big3
                'meteorBrown_med3.png', 'meteorBrown_small1.png', 'meteorBrown_small2.png', 'meteorBrown_tiny1.png', 'meteorBrown_tiny2.png']
 for img in meteor_list:
     meteor_images.append(pygame.image.load(path.join(img_dir, img).replace('\\','/')).convert())
-
+#load sound
+shoot_sound = pygame.mixer.Sound(path.join(snd_dir, "Laser_Shoot2.wav").replace('\\','/'))
+expl_sounds = []
+for snd in ['Explosion.wav', 'Explosion8.wav']:
+    expl_sounds.append(pygame.mixer.Sound(path.join(snd_dir, snd)))
+pygame.mixer.music.load(path.join(snd_dir, "tgfcoder-FrozenJam-SeamlessLoop.ogg").replace('\\','/'))
+pygame.mixer.music.set_volume(0.1)
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -136,7 +144,7 @@ for i in range    (8):
     all_sprites.add(m)
     mobs.add(m)
 score = 0
-
+pygame.mixer.music.play(loops=-1)
 # Game loop
 running = True
 while running:
@@ -156,8 +164,12 @@ while running:
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     
     for hit in hits:
-        print(hits)
+        #print(hits)
         score += 50 - hit.radius
+
+        soundexp = random.choice(expl_sounds)
+        soundexp.set_volume(0.1)
+        soundexp.play()
         m = Mob ()
         all_sprites.add(m)
         mobs.add(m)
